@@ -1,0 +1,253 @@
+<html>
+<head>
+	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+	
+	<style>
+			
+			
+		#back{
+			width:5%;
+			z-index:2000;
+			position:absolute;
+			top:5%;
+			left:5%;
+			cursor:pointer;
+			  -webkit-filter: drop-shadow(12px 12px 25px rgba(0,0,0,0.5));
+			filter: url(#drop-shadow);
+			
+			
+		}
+		html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+		
+		
+		
+		#map {
+			height: 50vh;
+			width: 100vw;
+       }
+	   
+	   #container {
+       
+        width: 100vw !important;
+       }
+	   
+	   
+	   .commentList{
+	   position:relative;
+	   float:left;
+			width:100%;
+			border-bottom:1px solid #F0F0F0;
+
+	   }
+	   
+	   .comment{
+			position:relative;
+			float:left;
+			width:100%;
+			border:none;
+			margin-bottom:3%;
+		
+			 outline: none;
+			 margin-right:5%;
+			 padding-bottom:2%;
+			 border-bottom:1px solid lightgray;
+	   }
+	      
+	   .comment2{
+			position:relative;
+			float:left;
+			width:100%;
+			border:none;
+			
+		
+			 outline: none;
+			 margin-right:5%;
+			 padding-bottom:2%;
+			
+	   }
+	   #post{
+	   	margin-bottom:3%;
+			border:none;
+			background-color:#69b2e9;
+				 padding-bottom:2%;
+				 padding-top:2%;
+				 color:white;
+			width:100%;
+	   }
+	   #name{
+		color:gray;
+
+	   }
+	   
+	   .commentList{
+		padding-top:2%;
+	   }
+	   	   
+#top_menu{
+
+   background-color:white;
+   left:0;
+   position:fixed;
+   top:0;
+   font-size:10px !important;
+   z-index:1000000;
+   width:100%;
+   height:8%;
+   color:gray;
+	font-family: "Roboto", sans-serif;
+	
+   padding-top:2%;
+}
+#back{
+	opacity:0.7;
+}#back{
+		width:7%;
+		z-index:2000;
+		position:absolute;
+		top:18%;
+		left:5%;
+		cursor:pointer;
+		   -webkit-filter: drop-shadow(12px 12px 25px rgba(0,0,0,0.5));
+		filter: url(#drop-shadow);
+		padding-top:1.5%;
+		
+	}
+	h2{
+        display: block;
+		-webkit-margin-before: 0.83em;
+		-webkit-margin-after: 0.83em;
+		-webkit-margin-start: 0px;
+		-webkit-margin-end: 0px;
+		font-weight: bold;
+		
+		
+	}
+	
+	.w3-third{
+		padding:0 !important;
+	}
+	
+	.w3-row-padding{
+		padding:0 !important;
+	}
+	</style>
+</head>
+
+<body class="w3-light-grey">
+
+ 	<div id='top_menu'>
+		<img id='back' src='img/back2.png'  onclick='window.location=`map.html`'/>
+		<center><h2>Details</h2></center>
+	</div>
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:100%;">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+  
+    <!-- Left Column -->
+    <div class="w3-third">
+    
+      <div class="w3-white w3-text-grey w3-card-4" id='container'>
+        <div class="w3-display-container">
+          <div id="map"></div>
+          <div class="w3-display-bottomleft w3-container w3-text-black">
+        
+          </div>
+        </div>
+		   
+        <div class="w3-container">
+		<h2 id="name"></h2>
+          <p id="Categories"></p>
+          <p id="type"></p>
+		  <label>Description :</label>
+          <label id="description"></label>
+			<br><br><br>
+		  <div id='commentArea'>
+			<div class='commentList'> 
+				<div style='width:100%'>
+					<input type='text' class='comment' id='userComment' placeholder="Comment"/>
+				</div>
+				<div style='20%'>
+					<button id='post' type='button'>Post</button>
+				</div>
+			</div>
+			
+		  </div>
+
+          </div>
+			
+</body>
+<script src="js/api.js"></script>
+<script>
+var data=JSON.parse(localStorage.getItem("current_details"));
+
+
+	$(document).ready(function(){
+		//console.log(JSON.parse(localStorage.getItem("current_details")));
+		var data=JSON.parse(localStorage.getItem("current_details"));
+		
+		var k=localStorage.getItem("current_key");
+		fire.getComment(k);
+		console.log(data);
+		$('#lat').html(data.lat);
+		$('#long').html(data.long);
+		$('#name').html(data.name);
+		$('#description').html(data.description);
+		$('#Categories').html("Categories : "+data.type );
+		//$('#type').html("Type : " + data.needgive.type  );
+		
+		 $("#post").click(function(){
+			var fire=new Api();
+			var msg = $('#userComment').val();
+			$('#userComment').val('');
+			fire.writeComment(k,msg,"Chew");
+		});
+	
+		});
+		function initMap() {
+			var map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 15,
+			center: {lat: parseFloat(data.lat), lng: parseFloat(data.long) },
+			disableDefaultUI: true
+			
+			}
+			
+			);
+			getMarker1(map);
+		
+			
+			
+			
+		}
+		
+		function getMarker1(map){
+			
+			
+			var marker=new google.maps.Marker({
+				position: {lat: parseFloat(data.lat), lng: parseFloat(data.long)},
+				map: map,
+				animation: google.maps.Animation.DROP,
+				title:"Hello World!",
+				draggable:false
+			});
+		
+		}
+	
+	
+	
+
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqUiYyFs38J1kNpp_gR8OZPwB7yRJXma8&callback=initMap">
+</script>
+</html>
+
+<script>
+	$(document).ready(function(){
+   
+});
+</script>
